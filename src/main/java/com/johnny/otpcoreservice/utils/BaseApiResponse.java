@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Data
 
-public class ApiResponse<T> {
+public class BaseApiResponse<T> {
     private String Status;
-
     private String message;
+    private   T data;
 
-    private   <T> data;
+    public BaseApiResponse(String status, String message, T data) {
+        Status = status;
+        this.message = message;
+        this.data = data;
+    }
 }
