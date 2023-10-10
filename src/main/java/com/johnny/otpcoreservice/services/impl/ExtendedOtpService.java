@@ -39,8 +39,8 @@ public class ExtendedOtpService {
     public ApiResponse getOtp(OtpRequestDto otpRequest) {
         log.info("payload {}", otpRequest);
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(DefaultResponse.ResponseStatus.API_FAIL_STATUS.getCode());
-        apiResponse.setMessage(DefaultResponse.ResponseStatus.API_FAIL_STATUS.getDescription());
+        apiResponse.setStatus(DefaultResponse.ResponseCode.FAILED.getCode());
+        apiResponse.setMessage(DefaultResponse.ResponseCode.FAILED.getDescription());
    try {
        otpRequest.setStatus(String.valueOf(OtpStatus.SENT));
        otpRequest.setDateCreated(Instant.now());
@@ -61,8 +61,8 @@ public class ExtendedOtpService {
         otpResponseDto.setOtp(otpRequest.getOtp());
 
         apiResponse.setData(otpResponseDto);
-        apiResponse.setMessage(DefaultResponse.ResponseStatus.API_SUCCESS_STATUS.getDescription());
-        apiResponse.setStatus(DefaultResponse.ResponseStatus.API_SUCCESS_STATUS.getCode());
+        apiResponse.setMessage(DefaultResponse.ResponseCode.SUCCESS.getDescription());
+        apiResponse.setStatus(DefaultResponse.ResponseCode.SUCCESS.getCode());
         return apiResponse;
 
     }
@@ -107,23 +107,20 @@ public class ExtendedOtpService {
         ApiResponse response = new ApiResponse();
         Instant currentTime = Instant.now();
         Instant otpCreated = request.getDateCreated();
-        Instant expiredOtpDate = otpCreated.plus(Duration.ofMinutes(request.getTtl()));
+        Instant expiredOtpDate = otpCreated.plus(Duration.ofSeconds(request.getTtl()));
         if(expiredOtpDate.isBefore(currentTime)){
             request.setStatus(OtpStatus.EXPIRED.name());
             otpService.saveOtp(request);
-           response.setData(request);
-        }else{
+           response.setMessage("Otp has expired");
+           response.setStatus((DefaultResponse.ResponseCode.SUCCESS.getCode()));
+           return response;
+          }else{
             request.setDateValidated(Instant.now());
             request.setStatus(OtpStatus.VERIFIED.name());
-            response.setData(request);
+            otpService.saveOtp(request);
+            response.setStatus(DefaultResponse.ResponseCode.SUCCESS.getCode());
+            response.setMessage("OTP is verified");
+            return response;
         }
-//        request.setDateValidated(Instant.now());
-//        request.setStatus(OtpStatus.VERIFIED.name());
-////        otpService.saveOtp(request);
-        response.setData(request);
-        response.setMessage(DefaultResponse.ResponseCode.SUCCESS.getCode());
-        response.setStatus(DefaultResponse.ResponseStatus.API_SUCCESS_STATUS.getDescription());
-         return response;
-
     }
 }
