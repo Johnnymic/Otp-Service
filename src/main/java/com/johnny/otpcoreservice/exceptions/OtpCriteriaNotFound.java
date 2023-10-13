@@ -1,2 +1,4 @@
-package com.johnny.otpcoreservice.exceptions;public class OtpCriteriaNotFound {
+package com.johnny.otpcoreservice.exceptions;
+
+public class OtpCriteriaNotFound extends Throwable {
 }
