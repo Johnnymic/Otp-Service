@@ -1,2 +1,4 @@
-package com.johnny.otpcoreservice.exceptions;public class OtpNotFoundException {
+package com.johnny.otpcoreservice.exceptions;
+
+public class OtpNotFoundException {
 }
